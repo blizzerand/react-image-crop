@@ -115,14 +115,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var passiveSupported = false;
 
 try {
-  window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+  window.addEventListener("test", null, Object.defineProperty({}, "passive", {
     get: function get() {
-      passiveSupported = true;return true;
+      passiveSupported = true;
+      return true;
     }
   }));
 } catch (err) {} // eslint-disable-line no-empty
 
-var EMPTY_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+var EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
 
 function getClientPos(e) {
   var pageX = void 0;
@@ -156,14 +157,14 @@ function isCropValid(crop) {
 function inverseOrd(ord) {
   var inversedOrd = void 0;
 
-  if (ord === 'n') inversedOrd = 's';else if (ord === 'ne') inversedOrd = 'sw';else if (ord === 'e') inversedOrd = 'w';else if (ord === 'se') inversedOrd = 'nw';else if (ord === 's') inversedOrd = 'n';else if (ord === 'sw') inversedOrd = 'ne';else if (ord === 'w') inversedOrd = 'e';else if (ord === 'nw') inversedOrd = 'se';
+  if (ord === "n") inversedOrd = "s";else if (ord === "ne") inversedOrd = "sw";else if (ord === "e") inversedOrd = "w";else if (ord === "se") inversedOrd = "nw";else if (ord === "s") inversedOrd = "n";else if (ord === "sw") inversedOrd = "ne";else if (ord === "w") inversedOrd = "e";else if (ord === "nw") inversedOrd = "se";
 
   return inversedOrd;
 }
 
 function makeAspectCrop(crop, imageAspect) {
   if (isNaN(crop.aspect) || isNaN(imageAspect)) {
-    console.warn('`crop.aspect` and `imageAspect` need to be numbers in order to make an aspect crop', crop);
+    console.warn("`crop.aspect` and `imageAspect` need to be numbers in order to make an aspect crop", crop);
     return crop;
   }
 
@@ -306,7 +307,7 @@ var ReactCrop = function (_PureComponent) {
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReactCrop.__proto__ || Object.getPrototypeOf(ReactCrop)).call.apply(_ref, [this].concat(args))), _this), _this.window = window, _this.document = document, _this.state = {}, _this.onCropMouseTouchDown = function (e) {
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReactCrop.__proto__ || Object.getPrototypeOf(ReactCrop)).call.apply(_ref, [this].concat(args))), _this), _this.window = typeof window !== "undefined" ? window : null, _this.document = typeof document !== "undefined" ? document : null, _this.state = {}, _this.onCropMouseTouchDown = function (e) {
       var _this$props = _this.props,
           crop = _this$props.crop,
           disabled = _this$props.disabled;
@@ -325,8 +326,8 @@ var ReactCrop = function (_PureComponent) {
 
       var ord = e.target.dataset.ord;
 
-      var xInversed = ord === 'nw' || ord === 'w' || ord === 'sw';
-      var yInversed = ord === 'nw' || ord === 'n' || ord === 'ne';
+      var xInversed = ord === "nw" || ord === "w" || ord === "sw";
+      var yInversed = ord === "nw" || ord === "n" || ord === "ne";
 
       var cropOffset = void 0;
 
@@ -405,7 +406,7 @@ var ReactCrop = function (_PureComponent) {
         startXCrossOver: false,
         startYCrossOver: false,
         isResize: true,
-        ord: 'nw'
+        ord: "nw"
       };
 
       _this.mouseDownOnCrop = true;
@@ -527,16 +528,20 @@ var ReactCrop = function (_PureComponent) {
   }
 
   _createClass(ReactCrop, [{
-    key: 'componentDidMount',
+    key: "componentDidMount",
     value: function componentDidMount() {
+      if (!this.document) {
+        return;
+      }
       var options = passiveSupported ? { passive: false } : false;
+      var doc = this.getDocument();
 
-      this.document.addEventListener('mousemove', this.onDocMouseTouchMove, options);
-      this.document.addEventListener('touchmove', this.onDocMouseTouchMove, options);
+      doc.addEventListener("mousemove", this.onDocMouseTouchMove, options);
+      doc.addEventListener("touchmove", this.onDocMouseTouchMove, options);
 
-      this.document.addEventListener('mouseup', this.onDocMouseTouchEnd, options);
-      this.document.addEventListener('touchend', this.onDocMouseTouchEnd, options);
-      this.document.addEventListener('touchcancel', this.onDocMouseTouchEnd, options);
+      doc.addEventListener("mouseup", this.onDocMouseTouchEnd, options);
+      doc.addEventListener("touchend", this.onDocMouseTouchEnd, options);
+      doc.addEventListener("touchcancel", this.onDocMouseTouchEnd, options);
 
       if (this.imageRef.complete || this.imageRef.readyState) {
         if (this.imageRef.naturalWidth === 0) {
@@ -553,17 +558,18 @@ var ReactCrop = function (_PureComponent) {
       }
     }
   }, {
-    key: 'componentWillUnmount',
+    key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      this.document.removeEventListener('mousemove', this.onDocMouseTouchMove);
-      this.document.removeEventListener('touchmove', this.onDocMouseTouchMove);
+      var doc = this.getDocument();
+      doc.removeEventListener("mousemove", this.onDocMouseTouchMove);
+      doc.removeEventListener("touchmove", this.onDocMouseTouchMove);
 
-      this.document.removeEventListener('mouseup', this.onDocMouseTouchEnd);
-      this.document.removeEventListener('touchend', this.onDocMouseTouchEnd);
-      this.document.removeEventListener('touchcancel', this.onDocMouseTouchEnd);
+      doc.removeEventListener("mouseup", this.onDocMouseTouchEnd);
+      doc.removeEventListener("touchend", this.onDocMouseTouchEnd);
+      doc.removeEventListener("touchcancel", this.onDocMouseTouchEnd);
     }
   }, {
-    key: 'onImageLoad',
+    key: "onImageLoad",
     value: function onImageLoad(image) {
       var _props = this.props,
           crop = _props.crop,
@@ -585,33 +591,63 @@ var ReactCrop = function (_PureComponent) {
       }
     }
   }, {
-    key: 'getElementOffset',
-    value: function getElementOffset(el) {
-      var rect = el.getBoundingClientRect();
-      var docEl = this.document.documentElement;
-
-      var rectTop = rect.top + this.window.pageYOffset - docEl.clientTop;
-      var rectLeft = rect.left + this.window.pageXOffset - docEl.clientLeft;
-
-      return {
-        top: rectTop,
-        left: rectLeft
-      };
+    key: "getDocument",
+    value: function getDocument() {
+      return this.document || document || {};
     }
   }, {
-    key: 'getCropStyle',
+    key: "getWindow",
+    value: function getWindow() {
+      return this.window || window || {};
+    }
+  }, {
+    key: "getDocumentOffset",
+    value: function getDocumentOffset() {
+      var _ref2 = this.getDocument().documentElement || {},
+          _ref2$clientTop = _ref2.clientTop,
+          top = _ref2$clientTop === undefined ? 0 : _ref2$clientTop,
+          _ref2$clientLeft = _ref2.clientLeft,
+          left = _ref2$clientLeft === undefined ? 0 : _ref2$clientLeft;
+
+      return { top: top, left: left };
+    }
+  }, {
+    key: "getWindowOffset",
+    value: function getWindowOffset() {
+      var _getWindow = this.getWindow(),
+          _getWindow$pageYOffse = _getWindow.pageYOffset,
+          top = _getWindow$pageYOffse === undefined ? 0 : _getWindow$pageYOffse,
+          _getWindow$pageXOffse = _getWindow.pageXOffset,
+          left = _getWindow$pageXOffse === undefined ? 0 : _getWindow$pageXOffse;
+
+      return { top: top, left: left };
+    }
+  }, {
+    key: "getElementOffset",
+    value: function getElementOffset(el) {
+      var rect = el.getBoundingClientRect();
+      var doc = this.getDocumentOffset();
+      var win = this.getWindowOffset();
+
+      var top = rect.top + win.top - doc.top;
+      var left = rect.left + win.left - doc.left;
+
+      return { top: top, left: left };
+    }
+  }, {
+    key: "getCropStyle",
     value: function getCropStyle() {
       var crop = this.props.crop;
 
       return {
-        top: crop.y + '%',
-        left: crop.x + '%',
-        width: crop.width + '%',
-        height: crop.height + '%'
+        top: crop.y + "%",
+        left: crop.x + "%",
+        width: crop.width + "%",
+        height: crop.height + "%"
       };
     }
   }, {
-    key: 'getNewSize',
+    key: "getNewSize",
     value: function getNewSize() {
       var _props2 = this.props,
           crop = _props2.crop,
@@ -658,7 +694,7 @@ var ReactCrop = function (_PureComponent) {
       };
     }
   }, {
-    key: 'dragCrop',
+    key: "dragCrop",
     value: function dragCrop() {
       var nextCrop = this.makeNewCrop();
       var evData = this.evData;
@@ -668,7 +704,7 @@ var ReactCrop = function (_PureComponent) {
       return nextCrop;
     }
   }, {
-    key: 'resizeCrop',
+    key: "resizeCrop",
     value: function resizeCrop() {
       var nextCrop = this.makeNewCrop();
       var evData = this.evData;
@@ -749,7 +785,7 @@ var ReactCrop = function (_PureComponent) {
       return nextCrop;
     }
   }, {
-    key: 'straightenYPath',
+    key: "straightenYPath",
     value: function straightenYPath(clientX) {
       var evData = this.evData;
       var ord = evData.ord;
@@ -760,7 +796,7 @@ var ReactCrop = function (_PureComponent) {
       var k = void 0;
       var d = void 0;
 
-      if (ord === 'nw' || ord === 'se') {
+      if (ord === "nw" || ord === "se") {
         k = cropStartHeight / cropStartWidth;
         d = cropOffset.top - cropOffset.left * k;
       } else {
@@ -771,7 +807,7 @@ var ReactCrop = function (_PureComponent) {
       return k * clientX + d;
     }
   }, {
-    key: 'createCropSelection',
+    key: "createCropSelection",
     value: function createCropSelection() {
       var _this3 = this;
 
@@ -783,43 +819,43 @@ var ReactCrop = function (_PureComponent) {
       var style = this.getCropStyle();
 
       return _react2.default.createElement(
-        'div',
+        "div",
         {
           ref: function ref(n) {
             _this3.cropSelectRef = n;
           },
           style: style,
-          className: 'ReactCrop__crop-selection',
+          className: "ReactCrop__crop-selection",
           onMouseDown: this.onCropMouseTouchDown,
           onTouchStart: this.onCropMouseTouchDown,
-          role: 'presentation'
+          role: "presentation"
         },
         !disabled && !locked && _react2.default.createElement(
-          'div',
-          { className: 'ReactCrop__drag-elements' },
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-bar ord-n', 'data-ord': 'n' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-bar ord-e', 'data-ord': 'e' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-bar ord-s', 'data-ord': 's' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-bar ord-w', 'data-ord': 'w' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-nw', 'data-ord': 'nw' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-n', 'data-ord': 'n' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-ne', 'data-ord': 'ne' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-e', 'data-ord': 'e' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-se', 'data-ord': 'se' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-s', 'data-ord': 's' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-sw', 'data-ord': 'sw' }),
-          _react2.default.createElement('div', { className: 'ReactCrop__drag-handle ord-w', 'data-ord': 'w' })
+          "div",
+          { className: "ReactCrop__drag-elements" },
+          _react2.default.createElement("div", { className: "ReactCrop__drag-bar ord-n", "data-ord": "n" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-bar ord-e", "data-ord": "e" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-bar ord-s", "data-ord": "s" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-bar ord-w", "data-ord": "w" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-nw", "data-ord": "nw" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-n", "data-ord": "n" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-ne", "data-ord": "ne" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-e", "data-ord": "e" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-se", "data-ord": "se" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-s", "data-ord": "s" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-sw", "data-ord": "sw" }),
+          _react2.default.createElement("div", { className: "ReactCrop__drag-handle ord-w", "data-ord": "w" })
         ),
         renderSelectionAddon && renderSelectionAddon(this.state)
       );
     }
   }, {
-    key: 'makeNewCrop',
+    key: "makeNewCrop",
     value: function makeNewCrop() {
       return _extends({}, ReactCrop.defaultCrop, this.props.crop);
     }
   }, {
-    key: 'crossOverCheck',
+    key: "crossOverCheck",
     value: function crossOverCheck() {
       var evData = this.evData;
 
@@ -839,7 +875,7 @@ var ReactCrop = function (_PureComponent) {
       evData.inversedYOrd = swapYOrd ? inverseOrd(evData.ord) : false;
     }
   }, {
-    key: 'render',
+    key: "render",
     value: function render() {
       var _this4 = this;
 
@@ -863,56 +899,56 @@ var ReactCrop = function (_PureComponent) {
         cropSelection = this.createCropSelection();
       }
 
-      var componentClasses = ['ReactCrop'];
+      var componentClasses = ["ReactCrop"];
 
       if (cropIsActive) {
-        componentClasses.push('ReactCrop--active');
+        componentClasses.push("ReactCrop--active");
       }
 
       if (crop) {
         if (crop.aspect) {
-          componentClasses.push('ReactCrop--fixed-aspect');
+          componentClasses.push("ReactCrop--fixed-aspect");
         }
 
         // In this case we have to shadow the image, since the box-shadow
         // on the crop won't work.
         if (cropIsActive && (!crop.width || !crop.height)) {
-          componentClasses.push('ReactCrop--crop-invisible');
+          componentClasses.push("ReactCrop--crop-invisible");
         }
       }
 
       if (disabled) {
-        componentClasses.push('ReactCrop--disabled');
+        componentClasses.push("ReactCrop--disabled");
       }
 
       if (locked) {
-        componentClasses.push('ReactCrop--locked');
+        componentClasses.push("ReactCrop--locked");
       }
 
       if (className) {
-        componentClasses.push.apply(componentClasses, _toConsumableArray(className.split(' ')));
+        componentClasses.push.apply(componentClasses, _toConsumableArray(className.split(" ")));
       }
 
       return _react2.default.createElement(
-        'div',
+        "div",
         {
           ref: function ref(n) {
             _this4.componentRef = n;
           },
-          className: componentClasses.join(' '),
+          className: componentClasses.join(" "),
           style: style,
           onTouchStart: this.onComponentMouseTouchDown,
           onMouseDown: this.onComponentMouseTouchDown,
-          role: 'presentation',
+          role: "presentation",
           tabIndex: 1,
           onKeyDown: this.onComponentKeyDown
         },
-        _react2.default.createElement('img', {
+        _react2.default.createElement("img", {
           ref: function ref(n) {
             _this4.imageRef = n;
           },
           crossOrigin: crossorigin,
-          className: 'ReactCrop__image',
+          className: "ReactCrop__image",
           style: imageStyle,
           src: src,
           onLoad: function onLoad(e) {
@@ -930,9 +966,9 @@ var ReactCrop = function (_PureComponent) {
   return ReactCrop;
 }(_react.PureComponent);
 
-ReactCrop.xOrds = ['e', 'w'];
-ReactCrop.yOrds = ['n', 's'];
-ReactCrop.xyOrds = ['nw', 'ne', 'se', 'sw'];
+ReactCrop.xOrds = ["e", "w"];
+ReactCrop.yOrds = ["n", "s"];
+ReactCrop.xyOrds = ["nw", "ne", "se", "sw"];
 
 ReactCrop.arrowKey = {
   left: 37,
@@ -987,7 +1023,7 @@ ReactCrop.defaultProps = {
   crossorigin: undefined,
   disabled: false,
   locked: false,
-  imageAlt: '',
+  imageAlt: "",
   maxWidth: 100,
   maxHeight: 100,
   minWidth: 0,
